@@ -30,9 +30,9 @@ Each swimmer record includes:
 
 * absent (optional flag for availability)
 
-* The program evaluates all possible combinations of 4 different swimmers, one per stroke.
+The program evaluates all possible combinations of 4 different swimmers, one per stroke.
 
-* It calculates the total relay time for each valid combination and returns the fastest one.
+It calculates the total relay time for each valid combination and returns the fastest one.
 
 
 
