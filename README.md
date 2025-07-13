@@ -13,7 +13,8 @@ This Python program uses sqlite3 to manage a database of swimmers and their indi
 
 ✅ Works for any age/gender group stored in the database
 
-🧠 How it Works
+🧠 How it Works:
+
 Swimmers are entered into a database table named by age and gender (e.g., eightumale).
 
 Each swimmer record includes:
@@ -28,7 +29,8 @@ The program evaluates all possible combinations of 4 different swimmers, one per
 
 It calculates the total relay time for each valid combination and returns the fastest one.
 
-🛠️ Technologies Used
+🛠️ Technologies Used:
+
 Python 3
 
 SQLite3
