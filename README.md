@@ -6,15 +6,15 @@ This Python program uses sqlite3 to manage a database of swimmers and their indi
 
 # Features:
 
-Add and organize swimmers by age, gender, and name
+* Add and organize swimmers by age, gender, and name
 
-Automatically stores times for all four strokes (free, back, breast, fly)
+* Automatically stores times for all four strokes (free, back, breast, fly)
 
-SQLite3-powered backend for persistent, structured data
+* SQLite3-powered backend for persistent, structured data
 
-Finds the fastest legal medley relay combination (no duplicate swimmers)
+* Finds the fastest legal medley relay combination (no duplicate swimmers)
 
-Works for any age/gender group stored in the database
+* Works for any age/gender group stored in the database
 
 
 
