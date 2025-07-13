@@ -4,7 +4,7 @@ from tkinter import *
 import sqlite3
 import itertools
 
-con = sqlite3.connect("c:/Users/speed/OneDrive/Documents/Relay Maker/Main.db")
+con = sqlite3.connect("Main.db")
 cur = con.cursor()
 
 """
