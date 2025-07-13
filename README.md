@@ -1,7 +1,8 @@
 🏊‍♂️ Medley Relay Optimizer
 This Python program uses sqlite3 to manage a database of swimmers and their individual stroke times. It automatically sorts swimmers into age/gender-specific tables and computes the fastest possible combination of swimmers for a medley relay. The relay includes one swimmer each for backstroke, breaststroke, butterfly, and freestyle—ensuring each swimmer is unique and only fills one stroke.
 
-🚀 Features
+🚀 Features:
+
 ✅ Add and organize swimmers by age, gender, and name
 
 ✅ Automatically stores times for all four strokes (free, back, breast, fly)
