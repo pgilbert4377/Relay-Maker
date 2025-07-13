@@ -8,6 +8,8 @@ con = sqlite3.connect("Main.db")
 cur = con.cursor()
 
 """
+#Creates all of the Tables I needed for this project, I left them commented out because testing would have tried to create the tables over and over again
+
 cur.execute("CREATE TABLE eightu(swimmerID INTEGER PRIMARY KEY AUTOINCREMENT,fname TEXT NOT NULL,lname TEXT NOT NULL,free_time DECIMAL(5,2),back_time DECIMAL(5,2),breast_time DECIMAL(5,2),fly_time DECIMAL(5,2),absent INTEGER)")
 cur.execute("CREATE TABLE ninetenmale(swimmerID INTEGER PRIMARY KEY AUTOINCREMENT,fname TEXT NOT NULL,lname TEXT NOT NULL,free_time DECIMAL(5,2),back_time DECIMAL(5,2),breast_time DECIMAL(5,2),fly_time DECIMAL(5,2),absent INTEGER)")
 cur.execute("CREATE TABLE ninetenfemale(swimmerID INTEGER PRIMARY KEY AUTOINCREMENT,fname TEXT NOT NULL,lname TEXT NOT NULL,free_time DECIMAL(5,2),back_time DECIMAL(5,2),breast_time DECIMAL(5,2),fly_time DECIMAL(5,2),absent INTEGER)")
@@ -19,7 +21,7 @@ cur.execute("CREATE TABLE quincemale(swimmerID INTEGER PRIMARY KEY AUTOINCREMENT
 cur.execute("CREATE TABLE quincefemale(swimmerID INTEGER PRIMARY KEY AUTOINCREMENT,fname TEXT NOT NULL,lname TEXT NOT NULL,free_time DECIMAL(5,2),back_time DECIMAL(5,2),breast_time DECIMAL(5,2),fly_time DECIMAL(5,2),absent INTEGER)")
 #"""
 
-def tableNamer(a,g):
+def tableNamer(a,g): #This picks the table to access based off of the inputs given in the GUI, the 8&U medley relays are mixed, so they only need the age group to determine the table
     tbl  = ''
     if a == '8&U':
         tbl += 'eightu'
@@ -45,7 +47,7 @@ def tableNamer(a,g):
             tbl += 'quincefemale'
     return tbl
 
-def reset_absences():
+def reset_absences(): #This is a standard reset for all of the swimmers' absence fields when filling out for a new week, so you don't have to worry about whether or not you missed marking someone present
     s = "UPDATE eightu SET absent = 0"
     cur.execute(s)
     s = "UPDATE ninetenmale SET absent = 0"
@@ -66,7 +68,7 @@ def reset_absences():
     cur.execute(s)
     con.commit()
     
-def update_time():
+def update_time(): #This is what gives the swimmers their times, it will only update if it is smaller than the existing time, otherwise it'll display the best times on the screen
     text.delete('1.0',END)
     a = swimmer_age_entry.get()
     g = swimmer_gender_entry.get()
@@ -95,7 +97,7 @@ def update_time():
     text.insert(END,sentence)
     con.commit()
 
-def absence_input():
+def absence_input(): #This is what actually marks the swimmers absent, or present based off of use, and it will display what you chose to do about the attendance on the screen
     text.delete('1.0',END)
     ab = int(absent_entry.get())
     a = swimmer_age_entry.get()
@@ -112,20 +114,20 @@ def absence_input():
     text.insert(END,str(f) + " " + str(l) + " is marked as " + out)
     con.commit()
     
-def make_relay():
+def make_relay(): #This contains the actual comparing and sorting of the program to find the fastest combination of swimmers for the best medley relays
     text.delete('1.0',END)
-    tab = ['eightu','ninetenmale','ninetenfemale','elfmale','elffemale','trecemale','trecefemale','quincemale','quincefemale']
-    min_combos = []
-    for i in range(9):
-        free_times=[]
+    tab = ['eightu','ninetenmale','ninetenfemale','elfmale','elffemale','trecemale','trecefemale','quincemale','quincefemale'] #List for table name convenience
+    min_combos = [] #The list to hold all of the age groups' best relays to eventually return at the end of this method
+    for i in range(9): #There are 9 Medley Relay events, one iteration for each
+        free_times=[] #A list for all of the free times, then one for back, etc.
         back_times=[]
         breast_times=[]
         fly_times=[]
-        s = "SELECT swimmerID,fname,lname,free_time FROM " + str(tab[i]) + " WHERE absent = 0"
+        s = "SELECT swimmerID,fname,lname,free_time FROM " + str(tab[i]) + " WHERE absent = 0" #This creates the SQL command to pull from the database to grab all of the swimmers' free times to place into the previously created lists, since I made NT equate to 999.99, there is a time for every swimmer, keeping the numbers consistent throughout the lists.
         res = cur.execute(s)
         times = res.fetchall()
         for row in times:
-            free_times.append([str(f"{row[1]} {row[2]}"),float(f"{row[3]}")])
+            free_times.append([str(f"{row[1]} {row[2]}"),float(f"{row[3]}")]) #This actually places the swimmers into the lists, only using their name and stroke time for each list, these are repeated for all four strokes
         s = "SELECT swimmerID,fname,lname,back_time FROM " + str(tab[i]) + " WHERE absent = 0"
         res = cur.execute(s)
         times = res.fetchall()
@@ -141,41 +143,44 @@ def make_relay():
         times = res.fetchall()
         for row in times:
             fly_times.append([str(f"{row[1]} {row[2]}"),float(f"{row[3]}")])
-        s = "SELECT COUNT(swimmerID) FROM " + str(tab[i]) + " WHERE absent = 0"
+        s = "SELECT COUNT(swimmerID) FROM " + str(tab[i]) + " WHERE absent = 0" #This is the SQL command to get the total numberof swimmers for the current table to tell the sorting loop how many times to loop through the lists
         res = cur.execute(s)
         count = res.fetchone()[0]
         print(count)
-        min_total = float('inf')
-        free = 0
+        min_total = float('inf') #This is the variable that is used to store the lowest total time value
+        free = 0 #These are created outside of for loop to be used later as indices for min_combos
         back = 0
         breast = 0
         fly = 0
-        if count < 4:
+        if count < 4: #A check to make sure there are at least enough swimmmers for one relay
             min_combos.append(f"There are not enough swimmers in {ageGroups2[i]} for a relay.")
         else:
-            for indices in itertools.permutations(range(count),4):
-                w,x,y,z = indices
-                if tab[i] == 'ninetenmale' or tab[i] == 'ninetenfemale':
+            for indices in itertools.permutations(range(count),4): #Creates all the possible combinations of 4 swimmers without any swimmer being used twice at a time
+                w,x,y,z = indices #Separates the combination into the 4 variables
+                if tab[i] == 'ninetenmale' or tab[i] == 'ninetenfemale': #Since the 9-10s swim 25 fly, but 50 of everything else, time gaps can be skewed, this is a low-grade fix
                     total = free_times[w][1] + back_times[x][1] + breast_times[y][1] + fly_times[z][1] + fly_times[z][1]
-                else:
+                else: #Gets the total time for all of the swimmers combined
                     total = free_times[w][1] + back_times[x][1] + breast_times[y][1] + fly_times[z][1]
-                if total < min_total:
+                if total < min_total: #Replaces the value of min_total if total is smaller than min_total and stores the indices for later use
                     min_total = total
                     free = w
                     back = x
                     breast = y
                     fly = z
-            min_combos.append(f"{ageGroups2[i]} | Back: {back_times[back][0]}, Breast: {breast_times[breast][0]}, Fly: {fly_times[fly][0]}, Free: {free_times[free][0]}")
-            print(f"{min_total:.2f}")
-            #print(free_times)
+            min_combos.append(f"{ageGroups2[i]} | Back: {back_times[back][0]}, Breast: {breast_times[breast][0]}, Fly: {fly_times[fly][0]}, Free: {free_times[free][0]}") #Arranges the data into the order of how a medley relay would be constructed, with names to make it easily arranged
+            print(f"{min_total:.2f}") #Prints the total in the terminal just to get an idea for what the fastest time is
+            #print(free_times) #I used this to make sure I hadn't messed up inputting times into worng tables etc.
     text.insert(END,min_combos[0] + "\n" + min_combos[1] + "\n" + min_combos[2] + "\n" + min_combos[3] + "\n" + min_combos[4] + "\n" + min_combos[5] + "\n" + min_combos[6] + "\n" + min_combos[7] + "\n" + min_combos[8])
     
+#Lists I used for convenience
 
 ageGroups = ['8&U','9-10','11-12','13-14','15-18']
 ageGroups2 = ['8&U','9-10 Boys','9-10 Girls','11-12 Boys','11-12 Girls','13-14 Boys','13-14 Girls','15-18 Boys','15-18 Girls']
 events = ['Free','Back','Breast','Fly']
 yn = ["Yes","No"]
 mf = ["Male","Female"]
+
+#GUI Construction
 
 root = tk.Tk()
 root.title("Swimmer Time Input")
