@@ -24,22 +24,22 @@ Swimmers are entered into a database table named by age and gender (e.g., ninete
 
 Each swimmer record includes:
 
-fname, lname (first and last name)
+* fname, lname (first and last name)
 
-free_time, back_time, breast_time, fly_time
+* free_time, back_time, breast_time, fly_time
 
-absent (optional flag for availability)
+* absent (optional flag for availability)
 
-The program evaluates all possible combinations of 4 different swimmers, one per stroke.
+* The program evaluates all possible combinations of 4 different swimmers, one per stroke.
 
-It calculates the total relay time for each valid combination and returns the fastest one.
+* It calculates the total relay time for each valid combination and returns the fastest one.
 
 
 
 # Technologies Used:
 
-Python 3
++ Python 3
 
-SQLite3
++ SQLite3
 
-Tkinter (optional) for GUI interaction (if applicable)
++ Tkinter (optional) for GUI interaction (if applicable)
